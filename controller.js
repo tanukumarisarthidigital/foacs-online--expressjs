@@ -3,7 +3,6 @@ const app = express();
 const port = 3000;
 const fs = require('fs').promises;
 const path = require('path');
-const process = require('process');
 const {authenticate} = require('@google-cloud/local-auth');
 const {google} = require('googleapis');
 const { fetchSheetData, placeOrder, upload,subscribeNow } = require('./service');
@@ -14,8 +13,8 @@ const SCOPES = ['https://www.googleapis.com/auth/drive',
   'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/spreadsheets'];
 
-const TOKEN_PATH = process.env.TOKEN_JSON_CONTENT || path.join(process.cwd(), 'token.json');
-const CREDENTIALS_PATH = process.env.CREDENTIALS_JSON_CONTENT || path.join(process.cwd(), 'credentials.json');
+  const TOKEN_PATH = path.join(process.cwd(), 'token.json');
+  const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
 
 /**

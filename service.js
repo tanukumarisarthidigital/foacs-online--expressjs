@@ -7,7 +7,7 @@ const path = require('path');
 const stream = require('stream');
 const util = require('util');
 require('dotenv').config();
-const CREDENTIALS_PATH = process.env.CREDENTIALS_JSON_CONTENT || path.join(process.cwd(), 'credentials.json');
+const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
 const cache =new Map();
 async function fetchDataWithCaching(key, fetchDataFunction) {
