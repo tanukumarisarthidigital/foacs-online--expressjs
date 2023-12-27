@@ -61,7 +61,7 @@ async function fetchSheetData(tenancyCode, type, name, oauth2Client) {
     if (rows) {
       for (let i = 0; i < rows.length; i++) {
         if (rows[i][0] === tenancyCode) {
-          rowIndex = i + 1; // Rows are 1-indexed in A1 notation
+          rowIndex = i + 1;
           break;
         }
       }
@@ -69,7 +69,7 @@ async function fetchSheetData(tenancyCode, type, name, oauth2Client) {
 
     // If the tenancyCode is found, fetch the entire row
     if (rowIndex !== null) {
-      const rowRange = `Sheet1!A${rowIndex}:Z${rowIndex}`; // Fetch up to column Z, adjust as needed
+      const rowRange = `Sheet1!A${rowIndex}:Z${rowIndex}`;
       const rowResponse = await sheets.spreadsheets.values.get({ spreadsheetId: spreadsheetId, range: rowRange });
       const newSheetLink = rowResponse.data.values[0][2]
       const newSheetId = newSheetLink.split('/')[5]
@@ -85,7 +85,7 @@ async function fetchSheetData(tenancyCode, type, name, oauth2Client) {
           if (typeRows[i][0] === type) {
             typePresent = true
             if (nameRows.values[i][0] === name) {
-              rowIndex = i + 1; // Rows are 1-indexed in
+              rowIndex = i + 1;
               break;
             }
           }
@@ -191,7 +191,6 @@ async function placeOrder(data, sheetId, oauth2Client) {
   })
   return { success: true }
 }
-
 async function upload(req, folderId, oauth2Client) {
   const pipeline = util.promisify(stream.pipeline)
   const drive = google.drive({ version: 'v3', auth: oauth2Client });
@@ -213,7 +212,6 @@ async function upload(req, folderId, oauth2Client) {
   fs.unlinkSync(tempFilePath)
   return { success: true, id: req.headers['content-type'].split('/')[1].toUpperCase() + '_' + Date.now() }
 }
-
   module.exports = {
     upload,
     placeOrder,

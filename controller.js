@@ -9,12 +9,11 @@ const {google} = require('googleapis');
 const { fetchSheetData, placeOrder, upload,subscribeNow } = require('./service');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());// If modifying these scopes, delete token.json.
+app.use(bodyParser.json());
 const SCOPES = ['https://www.googleapis.com/auth/drive',
   'https://www.googleapis.com/auth/drive.file',
-  'https://www.googleapis.com/auth/spreadsheets'];// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
+  'https://www.googleapis.com/auth/spreadsheets'];
+
 const TOKEN_PATH = process.env.TOKEN_JSON_CONTENT || path.join(process.cwd(), 'token.json');
 const CREDENTIALS_PATH = process.env.CREDENTIALS_JSON_CONTENT || path.join(process.cwd(), 'credentials.json');
 
@@ -77,25 +76,17 @@ async function authorize() {
 app.all('/api/online/:tenancyCode/:type/:name', async (req, res) => {
     const { tenancyCode, type, name } = req.params;
     try {
-
     const auth = await authorize();
-
     const { data, sheetId = null } = await fetchSheetData(tenancyCode, type, name,auth)
-  
-    let response = data;
-  
-    if (response.error) {
+      let response = data;
+      if (response.error) {
       res.json(response);
     } else {
       const galleryEndpoints = ["Gallery", "Menu", "Content", "Facebookpost", "Catalog", "OrderList", "PageHeaders", "Promotions"]
-  
-      switch (type) {
-
+        switch (type) {
         case "SubscribeNow":
-
           if (req.method === "POST") {
             response = await subscribeNow(req.body.email, sheetId, auth);
-
 
           } else {
             response = { error: "Method Not Allowed" };
@@ -154,30 +145,6 @@ app.all('/api/online/:tenancyCode/:type/:name', async (req, res) => {
       }
   });
 
-
-
-
-  // Handle re-authentication and obtain a new token
-// app.get('/api/reauthenticate', async (req, res) => {
-//   try {
-//     // Re-authenticate with the new scopes
-//     const newAuth = await authenticate({
-//       scopes: SCOPES,
-//       keyfilePath: CREDENTIALS_PATH,
-//     });
-
-//     // Save the new credentials
-//     await saveCredentials(newAuth);
-
-//     res.json({ success: true, message: 'Re-authentication successful.' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred during re-authentication.' });
-//   }
-// });
-
-
-// authorize().then(fetchSheetData).catch(console.error);
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
   });
