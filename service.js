@@ -6,7 +6,6 @@ const os = require('os');
 const path = require('path');
 const stream = require('stream');
 const util = require('util');
-require('dotenv').config();
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 
 const cache =new Map();
