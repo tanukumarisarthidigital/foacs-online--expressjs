@@ -15,7 +15,9 @@ async function fetchDataWithCaching(key, fetchDataFunction) {
     return JSON.parse(cachedData);
   } else {
     const data = await fetchDataFunction();
-    cache.set(key, JSON.stringify(data));
+    if (!data.data.error) {
+      cache.set(key, JSON.stringify(data));
+    }
     return data;
   }
 }
@@ -30,8 +32,16 @@ async function loadSavedCredentialsIfExist() {
   }
 }
 
-async function fetchSheetData(tenancyCode, type, name, oauth2Client) {
+function clearCache(key) {
+  cache.delete(key);
+}
+
+async function fetchSheetData(tenancyCode, type, name, oauth2Client,resetCacheParam) {
   const cacheKey = `fetchSheetData-${tenancyCode}-${type}-${name}`;
+  if (resetCacheParam) {
+    clearCache(cacheKey);
+    return{ data: { message: `Cache reset successful for key : ${cacheKey}` } };
+  }
   return await fetchDataWithCaching(cacheKey, async () => {
     let tokenData = await loadSavedCredentialsIfExist();
     if (tokenData) {

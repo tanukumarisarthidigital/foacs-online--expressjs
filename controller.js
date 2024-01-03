@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
 const SCOPES = ['https://www.googleapis.com/auth/drive',
   'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/spreadsheets'];
@@ -73,11 +74,17 @@ async function authorize() {
 }
 
 
-app.all('/api/online/:tenancyCode/:type/:name', async (req, res) => {
-    const { tenancyCode, type, name } = req.params;
+app.all('/api/online/:tenancyCode/:type/:name/:resetcache?', async (req, res,next) => {
     try {
+      res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500'); // or '*' for any origin
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  const { tenancyCode, type, name } = req.params;
+const resetCacheParam = req.url.includes('resetcache');
+
     const auth = await authorize();
-    const { data, sheetId = null } = await fetchSheetData(tenancyCode, type, name,auth)
+    const { data, sheetId = null } = await fetchSheetData(tenancyCode, type, name,auth,resetCacheParam)
       let response = data;
       if (response.error) {
       res.json(response);
@@ -143,7 +150,9 @@ app.all('/api/online/:tenancyCode/:type/:name', async (req, res) => {
         console.error(error);
         res.status(500).json({ error: "An error occurred while processing the request." });
       }
+      next();
   });
+  
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
