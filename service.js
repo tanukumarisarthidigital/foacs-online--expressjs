@@ -113,7 +113,7 @@ async function fetchSheetData(tenancyCode, type, name, oauth2Client,resetCachePa
         } else {
           const finalSheetLink = newResponse.data.values[0][2]
           const finalSheetId = finalSheetLink.split('/')[5]
-          const finalResponse = await getData(finalSheetId, 'Sheet1!A1:Z100', oauth2Client)
+          const finalResponse = await getData(finalSheetId, 'Sheet1!A1:BA100', oauth2Client)
           if (finalResponse.data.error) {
             return finalResponse
           }
@@ -171,7 +171,7 @@ async function subscribeNow(email, sheetId, oauth2Client) {
 
 async function placeOrder(data, sheetId, oauth2Client) {
   const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
-  const header = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Sheet1!A1:Z1' })
+  const header = await sheets.spreadsheets.values.get({ spreadsheetId: sheetId, range: 'Sheet1!A1:BA1' })
   const newRow = header.data.values[0].map((key) => {
     if (data[key]) {
       if (Array.isArray(data[key])) {
